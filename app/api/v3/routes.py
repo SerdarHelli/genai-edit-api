@@ -41,3 +41,6 @@ async def level3_guided_edit(
     except Exception:
         logger.exception("Error in Level 3 guided edit")
         raise HTTPException(status_code=500, detail="Guided edit generation failed")
+    
+def get_router() -> APIRouter:
+    return router

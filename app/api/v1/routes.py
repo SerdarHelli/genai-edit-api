@@ -26,3 +26,6 @@ async def level1_generate(
     except Exception as e:
         logger.exception("Error in Level 1 generation")
         raise HTTPException(status_code=500, detail="Image generation failed")
+    
+def get_router() -> APIRouter:
+    return router

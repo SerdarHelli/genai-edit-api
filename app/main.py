@@ -31,5 +31,13 @@ register_all_versions(app)
 async def root():
     return {
         "message": "Multi editing SerdarHelli's API",
-        "versions": ["/api/v1/edit", "/api/v2/edit", "/api/v3/edit"]
+        "levels": ["/api/v1/edit", "/api/v2/edit", "/api/v3/edit"]
     }
+
+@app.get("/health", tags=["System"])
+async def health_check():
+    """
+    Health check endpoint for uptime monitoring.
+    Returns 200 OK if the service is alive.
+    """
+    return {"status": "ok"}

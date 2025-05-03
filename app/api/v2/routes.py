@@ -26,3 +26,6 @@ async def level2_edit(
     except Exception:
         logger.exception("Error in Level 2 editing")
         raise HTTPException(status_code=500, detail="Image editing failed")
+    
+def get_router() -> APIRouter:
+    return router
