@@ -27,7 +27,7 @@ logger.info(f"Pipeline instruct_pipe loaded successfully.")
 async def level2_edit(
     image: UploadFile = File(...),
     prompt: str = Form(...),
-    similarity_level: float = Form(0.8)
+    similarity_level: float = Form(0.5)
 ):
     try:
         logger.info(f"Level 2 request received with prompt='{prompt}', similarity_level={similarity_level}")

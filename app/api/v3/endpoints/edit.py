@@ -38,7 +38,7 @@ logger.info(f"Pipeline controlnet_dual loaded successfully.")
 async def level3_guided_edit(
     baseline: UploadFile = File(...),
     annotated: UploadFile = File(...),
-    similarity_level: float = Form(0.8),
+    similarity_level: float = Form(0.5),
     prompt: str = Form("")
 ):
     try:

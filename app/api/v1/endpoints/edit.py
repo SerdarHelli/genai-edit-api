@@ -27,7 +27,7 @@ logger.info(f"Pipeline img2img loaded successfully.")
 async def level1_generate(
     image: UploadFile = File(...),
     prompt: str = Form(""),
-    similarity_level: float = Form(0.8)
+    similarity_level: float = Form(0.5)
 ):
     try:
         prompt = enhance_prompt(prompt)
