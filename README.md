@@ -13,4 +13,6 @@
    To enable GPU support within Docker containers, install the NVIDIA Container Toolkit. Once installed, you can run containers with GPU support by adding the ```--gpus all``` flag.
  
 ---
- 
+ cd genai
+docker build -t genai-edit-api:test .
+docker run --rm -it   --gpus all   -p 9000:9000   genai-edit-api:test
