@@ -49,5 +49,4 @@ class LazyPipelineLoader:
 
         pipe.scheduler = UniPCMultistepScheduler.from_config(pipe.scheduler.config)
         pipe.enable_model_cpu_offload()
-        pipe.enable_xformers_memory_efficient_attention()
         return pipe
