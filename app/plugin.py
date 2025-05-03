@@ -1,5 +1,6 @@
 
 from fastapi import FastAPI
+
 from app.api.v1.routes import get_router as get_router_v1
 from app.api.v2.routes import get_router as get_router_v2
 from app.api.v3.routes import get_router as get_router_v3

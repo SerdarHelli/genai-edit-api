@@ -1,8 +1,9 @@
 from fastapi import FastAPI
-from app.core.plugin import register_all_versions
+from loguru import logger
+
+from app.plugin import register_all_versions
 from app.core.middleware import setup_middlewares
 from app.core.exceptation_handlers import setup_exception_handlers
-from loguru import logger
 
 # Configure global logging
 logger.add(

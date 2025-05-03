@@ -1,13 +1,10 @@
 import uuid
-from fastapi import Request, FastAPI
-from fastapi.responses import JSONResponse
-from loguru import logger
 
-import uuid
-from fastapi import FastAPI, Request
+from fastapi import Request, FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
+
 
 def setup_middlewares(app: FastAPI):
     # Add CORS middleware

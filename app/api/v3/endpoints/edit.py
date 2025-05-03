@@ -16,10 +16,12 @@ from app.utils.image_utils import read_image_bytes, to_canny, get_diff_mask
 from app.utils.prompt_utils  import enhance_prompt
 
 
-
 router = APIRouter()
 
+
+
 logger.info(f"Loading pipeline: controlnet_dual")
+device = torch.device( "cuda" if torch.cuda.is_available() else "cpu" ) 
 
 canny_net = ControlNetModel.from_pretrained("lllyasviel/sd-controlnet-canny", torch_dtype=torch.float16)
 mlsd_net = ControlNetModel.from_pretrained("lllyasviel/sd-controlnet-mlsd", torch_dtype=torch.float16)
@@ -28,11 +30,11 @@ pipe = StableDiffusionControlNetImg2ImgPipeline.from_pretrained(
     "runwayml/stable-diffusion-v1-5",
     controlnet=[canny_net, mlsd_net],
     torch_dtype=torch.float16
-).to("cuda")
+).to(device)
 
 pipe.scheduler = UniPCMultistepScheduler.from_config(pipe.scheduler.config)
 pipe.enable_model_cpu_offload()
-logger.info(f"Pipeline controlnet_dual loaded successfully.")
+logger.info(f"Pipeline controlnet_dual loaded successfully")
 
 @router.post("/level3")
 async def level3_guided_edit(

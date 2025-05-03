@@ -1,8 +1,10 @@
+
+import io
+import numpy as np
+
 from fastapi import UploadFile, HTTPException
 from PIL import Image
 from loguru import logger
-import io
-import numpy as np
 import cv2
 
 

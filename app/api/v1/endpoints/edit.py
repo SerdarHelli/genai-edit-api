@@ -13,11 +13,12 @@ from app.utils.prompt_utils  import enhance_prompt
 router = APIRouter()
 
 logger.info(f"Loading pipeline: img2img")
+device = torch.device( "cuda" if torch.cuda.is_available() else "cpu" ) 
 
 pipe = StableDiffusionImg2ImgPipeline.from_pretrained(
             "CompVis/stable-diffusion-v1-4",
             torch_dtype=torch.float16
-        ).to("cuda")
+        ).to(device)
 
 logger.info(f"Pipeline img2img loaded successfully.")
 

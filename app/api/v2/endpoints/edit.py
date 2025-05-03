@@ -12,12 +12,16 @@ from app.utils.image_utils import read_image_bytes
 
 router = APIRouter()
 
+
+
+device = torch.device( "cuda" if torch.cuda.is_available() else "cpu" ) 
+
 logger.info(f"Loading pipeline: instruct_pipe")
 
 instruct_pipe = StableDiffusionInstructPix2PixPipeline.from_pretrained(
             "timbrooks/instruct-pix2pix",
             torch_dtype=torch.float16
-        ).to("cuda")
+        ).to(device)
 logger.info(f"Pipeline instruct_pipe loaded successfully.")
 
 
