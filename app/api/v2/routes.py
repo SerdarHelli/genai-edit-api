@@ -28,4 +28,4 @@ def get_router() -> APIRouter:
             logger.exception("Error in Level 2 editing")
             raise HTTPException(status_code=500, detail="Image editing failed")
         
-        return router
+    return router
