@@ -3,11 +3,27 @@ from fastapi import Request, FastAPI
 from fastapi.responses import JSONResponse
 from loguru import logger
 
+import uuid
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
+from loguru import logger
+
 def setup_middlewares(app: FastAPI):
+    # Add CORS middleware
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
+    # Add logging middleware
     @app.middleware("http")
     async def enrich_logs_with_context(request: Request, call_next):
         request_id = str(uuid.uuid4())
-        request.state.request_id = request_id  # Needed for exception handler
+        request.state.request_id = request_id
 
         user_agent = request.headers.get("User-Agent", "unknown")
         user_id = request.headers.get("X-User-ID", "anonymous")

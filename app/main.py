@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from app.core.plugin import register_all_versions
 from app.core.middleware import setup_middlewares
-from app.core.exception_handlers import setup_exception_handlers
+from app.core.exceptation_handlers import setup_exception_handlers
 from loguru import logger
 
 # Configure global logging
@@ -25,8 +25,6 @@ app = FastAPI(
 # Setup middlewares and exceptions
 setup_middlewares(app)
 setup_exception_handlers(app)
-
-# Register versioned routers
 register_all_versions(app)
 
 @app.get("/")
