@@ -1,4 +1,4 @@
-from diffusers import StableDiffusionImg2ImgPipeline,StableDiffusionInstructPix2PixPipeline,ControlNetModel,StableDiffusionControlNetImg2ImgPipeline
+from diffusers import StableDiffusionImg2ImgPipeline,StableDiffusionInstructPix2PixPipeline, StableDiffusionControlNetImg2ImgPipeline, ControlNetModel, UniPCMultistepScheduler
 from loguru import logger
 import torch
 
@@ -29,19 +29,37 @@ def get_instruct_pix2pix_pipeline():
     return _instruct_pipe
 
 
+
 def get_controlnet_img2img_pipeline():
+    """
+    Lazy-load and cache a dual-ControlNet Stable Diffusion Img2Img pipeline
+    using Canny and MLSD maps for visual guidance.
+    
+    Returns:
+        StableDiffusionControlNetImg2ImgPipeline: the initialized pipeline.
+    """
     global _controlnet_pipe
+
     if _controlnet_pipe is None:
-        logger.info("Loading ControlNet Img2Img pipeline for v3...")
-        controlnet = ControlNetModel.from_pretrained(
-            "lllyasviel/sd-controlnet-canny",
-            torch_dtype=torch.float16
+        logger.info("Loading dual-ControlNet Img2Img pipeline (Canny + MLSD)...")
+
+        canny_net = ControlNetModel.from_pretrained(
+            "lllyasviel/sd-controlnet-canny", torch_dtype=torch.float16
         )
+        mlsd_net = ControlNetModel.from_pretrained(
+            "lllyasviel/sd-controlnet-mlsd", torch_dtype=torch.float16
+        )
+
         _controlnet_pipe = StableDiffusionControlNetImg2ImgPipeline.from_pretrained(
             "runwayml/stable-diffusion-v1-5",
-            controlnet=controlnet,
+            controlnet=[canny_net, mlsd_net],
             torch_dtype=torch.float16
         ).to("cuda")
+
+        _controlnet_pipe.scheduler = UniPCMultistepScheduler.from_config(_controlnet_pipe.scheduler.config)
         _controlnet_pipe.enable_model_cpu_offload()
-        logger.info("ControlNet Img2Img pipeline loaded successfully.")
+        _controlnet_pipe.enable_xformers_memory_efficient_attention()
+
+        logger.info("Dual-ControlNet Img2Img pipeline loaded and ready.")
+
     return _controlnet_pipe
