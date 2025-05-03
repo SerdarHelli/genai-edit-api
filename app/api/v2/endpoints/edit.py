@@ -1,12 +1,25 @@
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 from fastapi.responses import StreamingResponse
-from app.services.pipeline_loader import LazyPipelineLoader
 from app.utils.image_utils import read_image_bytes
 import io
 from loguru import logger
+from diffusers import StableDiffusionInstructPix2PixPipeline
+ 
+
+import torch
 
 router = APIRouter()
-loader = LazyPipelineLoader()
+
+logger.info(f"Loading pipeline: instruct_pipe")
+
+instruct_pipe = StableDiffusionInstructPix2PixPipeline.from_pretrained(
+            "timbrooks/instruct-pix2pix",
+            torch_dtype=torch.float16
+        ).to("cuda")
+logger.info(f"Pipeline instruct_pipe loaded successfully.")
+
+
+
 
 @router.post("/level2")
 async def level2_edit(
@@ -16,7 +29,6 @@ async def level2_edit(
 ):
     try:
         logger.info(f"Level 2 request received with prompt='{prompt}', similarity_level={similarity_level}")
-        instruct_pipe = loader.get("instruct")
         input_img = read_image_bytes(image)
         result = instruct_pipe(prompt=prompt, image=input_img, strength=1 - similarity_level)
         buf = io.BytesIO()

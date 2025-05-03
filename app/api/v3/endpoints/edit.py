@@ -2,15 +2,34 @@ from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 from fastapi.responses import StreamingResponse
 from loguru import logger
 import io
+from diffusers import (
+    StableDiffusionControlNetImg2ImgPipeline,
+    ControlNetModel,
+    UniPCMultistepScheduler
+)
+from loguru import logger
+import torch
 
 from app.utils.image_utils import read_image_bytes, to_canny, get_diff_mask
-from app.services.pipeline_loader import LazyPipelineLoader
 
 
 
 router = APIRouter()
-loader = LazyPipelineLoader()
 
+logger.info(f"Loading pipeline: controlnet_dual")
+
+canny_net = ControlNetModel.from_pretrained("lllyasviel/sd-controlnet-canny", torch_dtype=torch.float16)
+mlsd_net = ControlNetModel.from_pretrained("lllyasviel/sd-controlnet-mlsd", torch_dtype=torch.float16)
+
+pipe = StableDiffusionControlNetImg2ImgPipeline.from_pretrained(
+    "runwayml/stable-diffusion-v1-5",
+    controlnet=[canny_net, mlsd_net],
+    torch_dtype=torch.float16
+).to("cuda")
+
+pipe.scheduler = UniPCMultistepScheduler.from_config(pipe.scheduler.config)
+pipe.enable_model_cpu_offload()
+logger.info(f"Pipeline controlnet_dual loaded successfully.")
 
 @router.post("/level3")
 async def level3_guided_edit(
@@ -30,7 +49,6 @@ async def level3_guided_edit(
         diff_mask = get_diff_mask(base_img, ann_img).convert("RGB")
 
         # Get preloaded pipeline
-        pipe = loader.get("controlnet_dual")
 
         # Run inference
         result = pipe(
