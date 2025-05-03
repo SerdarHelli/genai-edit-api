@@ -1,4 +1,4 @@
-```
+
 # 🧠 GENAI-EDIT-API
 
 A versioned FastAPI-based service for image-to-image generation and editing using Stable Diffusion pipelines (img2img, instruct-pix2pix, and ControlNet).
@@ -50,7 +50,7 @@ README.md
 
 ## 🚀 Run Locally with Docker
 
-```
+```bash
 git clone  https://github.com/SerdarHelli/genai-edit-api
 
 cd genai-edit-api
@@ -123,4 +123,3 @@ pytest tests/test_api.py
 ## 🤝 License
 
 MIT License. © 2025 Serdar Helli
-```
