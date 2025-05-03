@@ -41,3 +41,6 @@ async def health_check():
     Returns 200 OK if the service is alive.
     """
     return {"status": "ok"}
+
+
+#uvicorn app.main:app --host 0.0.0.0 --port 7860

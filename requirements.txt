@@ -1,5 +1,10 @@
 diffusers==0.33.1
 fastapi==0.115.12
+loguru==0.7.3
+numpy==2.2.5
+opencv_python==4.11.0.86
 Pillow==11.2.1
+pytest==8.3.3
 torch==2.5.1+cu124
-python-multipart
+
+#I got from pipreqs

@@ -1,12 +1,14 @@
-from fastapi import APIRouter, UploadFile, File, Form, HTTPException
-from fastapi.responses import StreamingResponse
-from app.utils.image_utils import read_image_bytes
 import io
-from loguru import logger
-from diffusers import StableDiffusionInstructPix2PixPipeline
- 
 
 import torch
+from diffusers import StableDiffusionInstructPix2PixPipeline
+
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException
+from fastapi.responses import StreamingResponse
+from loguru import logger
+
+from app.utils.prompt_utils  import enhance_prompt
+from app.utils.image_utils import read_image_bytes
 
 router = APIRouter()
 
@@ -29,6 +31,7 @@ async def level2_edit(
 ):
     try:
         logger.info(f"Level 2 request received with prompt='{prompt}', similarity_level={similarity_level}")
+        prompt = enhance_prompt(prompt)
         input_img = read_image_bytes(image)
         result = instruct_pipe(prompt=prompt, image=input_img, strength=1 - similarity_level)
         buf = io.BytesIO()

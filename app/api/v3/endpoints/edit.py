@@ -1,16 +1,19 @@
-from fastapi import APIRouter, UploadFile, File, Form, HTTPException
-from fastapi.responses import StreamingResponse
-from loguru import logger
+
 import io
+
 from diffusers import (
     StableDiffusionControlNetImg2ImgPipeline,
     ControlNetModel,
     UniPCMultistepScheduler
 )
-from loguru import logger
 import torch
 
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException
+from fastapi.responses import StreamingResponse
+from loguru import logger
+
 from app.utils.image_utils import read_image_bytes, to_canny, get_diff_mask
+from app.utils.prompt_utils  import enhance_prompt
 
 
 
@@ -43,6 +46,7 @@ async def level3_guided_edit(
 
         base_img = read_image_bytes(baseline)
         ann_img = read_image_bytes(annotated)
+        prompt = enhance_prompt(prompt)
 
         # Generate control images
         canny_image = to_canny(ann_img).convert("RGB")

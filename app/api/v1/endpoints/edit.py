@@ -1,12 +1,14 @@
+import io
+
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 from fastapi.responses import StreamingResponse
-import io
 from loguru import logger
+
 from diffusers import StableDiffusionImg2ImgPipeline
 import torch
 
-
 from app.utils.image_utils import read_image_bytes
+from app.utils.prompt_utils  import enhance_prompt
 
 router = APIRouter()
 
@@ -28,6 +30,7 @@ async def level1_generate(
     similarity_level: float = Form(0.8)
 ):
     try:
+        prompt = enhance_prompt(prompt)
         logger.info(f"Level 1 request received with similarity_level={similarity_level}")
         input_img = read_image_bytes(image)
         result = pipe(prompt=prompt, image=input_img, strength=1 - similarity_level)
