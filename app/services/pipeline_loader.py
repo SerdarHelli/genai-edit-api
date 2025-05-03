@@ -58,7 +58,6 @@ def get_controlnet_img2img_pipeline():
 
         _controlnet_pipe.scheduler = UniPCMultistepScheduler.from_config(_controlnet_pipe.scheduler.config)
         _controlnet_pipe.enable_model_cpu_offload()
-        _controlnet_pipe.enable_xformers_memory_efficient_attention()
 
         logger.info("Dual-ControlNet Img2Img pipeline loaded and ready.")
 
