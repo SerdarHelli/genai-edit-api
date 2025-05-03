@@ -4,11 +4,14 @@ from loguru import logger
 import io
 
 from app.utils.image_utils import read_image_bytes, to_canny, get_diff_mask
-from app.services.pipeline_loader import get_controlnet_img2img_pipeline
+from app.services.pipeline_loader import LazyPipelineLoader
 
 
 
 router = APIRouter()
+loader = LazyPipelineLoader()
+
+
 @router.post("/level3")
 async def level3_guided_edit(
     baseline: UploadFile = File(...),
@@ -27,7 +30,7 @@ async def level3_guided_edit(
         diff_mask = get_diff_mask(base_img, ann_img).convert("RGB")
 
         # Get preloaded pipeline
-        pipe = get_controlnet_img2img_pipeline()
+        pipe = loader.get("controlnet_dual")
 
         # Run inference
         result = pipe(

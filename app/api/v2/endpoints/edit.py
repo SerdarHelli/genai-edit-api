@@ -1,11 +1,13 @@
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 from fastapi.responses import StreamingResponse
-from app.services.pipeline_loader import get_instruct_pix2pix_pipeline
+from app.services.pipeline_loader import LazyPipelineLoader
 from app.utils.image_utils import read_image_bytes
 import io
 from loguru import logger
 
 router = APIRouter()
+loader = LazyPipelineLoader()
+
 @router.post("/level2")
 async def level2_edit(
     image: UploadFile = File(...),
@@ -14,7 +16,7 @@ async def level2_edit(
 ):
     try:
         logger.info(f"Level 2 request received with prompt='{prompt}', similarity_level={similarity_level}")
-        instruct_pipe = get_instruct_pix2pix_pipeline()
+        instruct_pipe = loader.get("instruct")
         input_img = read_image_bytes(image)
         result = instruct_pipe(prompt=prompt, image=input_img, strength=1 - similarity_level)
         buf = io.BytesIO()

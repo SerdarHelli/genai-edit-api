@@ -1,12 +1,13 @@
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 from fastapi.responses import StreamingResponse
-from app.services.pipeline_loader import get_img2img_pipeline
+from app.services.pipeline_loader import LazyPipelineLoader
 from app.utils.image_utils import read_image_bytes
 import io
 from loguru import logger
 
 
 router = APIRouter()
+loader = LazyPipelineLoader()
 
 @router.post("/level1")
 async def level1_generate(
@@ -16,7 +17,7 @@ async def level1_generate(
 ):
     try:
         logger.info(f"Level 1 request received with similarity_level={similarity_level}")
-        pipe = get_img2img_pipeline()
+        pipe = loader.get("img2img")
         input_img = read_image_bytes(image)
         result = pipe(prompt=prompt, image=input_img, strength=1 - similarity_level)
         buf = io.BytesIO()
